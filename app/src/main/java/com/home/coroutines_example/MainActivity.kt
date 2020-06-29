@@ -19,8 +19,9 @@ class MainActivity : AppCompatActivity() {
         submit.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
                 //Al elegir el .Main, se decide que esa rutina se realizara en el hilo principal
-                //Ahora necesitamos que la siguiente línea donde valida el Login a un servidor, etc se realice en un segundo hilo, para esto
-                //uilizaremos un **Suspend / withContext**
+                //Ahora necesitamos que la siguiente línea donde valida el Login a un servidor, etc.
+                // Este se realice en un segundo hilo, para esto
+                //utilizaremos un **Suspend / withContext**
                 //**Suspend / withContext** = define que la funcion bloqueará el codigo en el punto donde es llamado, ejecuta la operación que tenga que realizar
                 //y cuando vuelva al hilo principal, devolvera el resultado del codigo u operacion esperado en la variable asignada.
                 val success = withContext(Dispatchers.IO) {
