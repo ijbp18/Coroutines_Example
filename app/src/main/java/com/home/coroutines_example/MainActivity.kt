@@ -16,17 +16,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         submit.setOnClickListener {
-            lifecycleScope.launch{// Al utilizar lifecycleScope ya no tenemos que implementar niguna interfaz de Scope,
-                // tampoco debemos preocuparnos por llamar al OnDestroy, ni nada de eso ya que el lifeCycle hará lo necesario por debajo.
-                val success = withContext(Dispatchers.IO) {
-                    validateLogin(username.text.toString(), password.text.toString())
+            lifecycleScope.launch{// Ahora realizaremos un ejemplo donde tengamos que ejecutar dos llamadas en paralelo
+                //si lo dejamos con el withContext, hasta que no termine el primero, no seguirá con el segundo.
+                //Y lo que queremos no es eso, para ello, lo cambiamos a **async** para que trabajen paralelamente
+                val success1 = async(Dispatchers.IO) {
+                    validateLogin1(username.text.toString(), password.text.toString())
                 }
-                toast(if(success) "Success" else "Failure")
+
+                val success2 = async(Dispatchers.IO) {
+                    validateLogin2(username.text.toString(), password.text.toString())
+                }
+                //El metodo en suspension se realiza cuando le agregamos el **.await** donde realizara el codigo necesario
+                // y sincronizara ambas tareas
+                toast(if(success1.await() && success2.await()) "Success" else "Failure")
             }
         }
     }
 
-    private fun validateLogin(username: String, password: String): Boolean{
+    private fun validateLogin1(username: String, password: String): Boolean{
+        Thread.sleep(2000)
+        return username.isNotEmpty() && password.isNotEmpty()
+    }
+
+    private fun validateLogin2(username: String, password: String): Boolean{
         Thread.sleep(2000)
         return username.isNotEmpty() && password.isNotEmpty()
     }
